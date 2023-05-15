@@ -14,17 +14,18 @@ public class PetDbAssn1 {
 
     public static void main(String[] args) {
         ArrayList<Pet> pets = new ArrayList<>();
-        
+        // default pets for testing purposes
+        /* 
         pets.add(new Pet("bobb", 9));
         pets.add(new Pet("joe", 8));
         pets.add(new Pet("bobb", 7));
         pets.add(new Pet("alice", 9));
-        
+        */
         
         
         int userChoice = -1;
         
-        while (userChoice != 4) {
+        while (userChoice != 6) {
             Boolean doneEntering = false;
             Scanner input = new Scanner(System.in);
             
@@ -32,18 +33,15 @@ public class PetDbAssn1 {
             System.out.println("1) View all pets");
             System.out.println("2) Add more pets");
             System.out.println("3) Search for pets");
-            
-            System.out.println("4) Exit program");
+            System.out.println("4) Update a pet");
+            System.out.println("5) Remove a pet");
+            System.out.println("6) Exit program");
             
             System.out.print("Enter a choice: ");
             userChoice = input.nextInt();
             
             if (userChoice == 1) {
-                displayPetHeader();
-                    for (int k = 0; k < pets.size(); k++) {
-                        displayPetRow(k, pets);
-                    }
-                    displayPetFooter(pets);
+                displayFullPetTable(pets);
             }
             else if (userChoice == 2) {
                 System.out.println("Enter \"done\" when finished entering new pets.");
@@ -93,9 +91,49 @@ public class PetDbAssn1 {
                     System.out.println("That is not a valid search option\n");
                 }
             }
+            else if (userChoice == 4) {
+                displayFullPetTable(pets);
+                
+                Scanner updateId = new Scanner(System.in);
+                
+                System.out.println("");
+                System.out.print("Enter the ID of the pet you would like to update: ");
+                int petToUpdate = updateId.nextInt();
+                
+                Scanner updatePet = new Scanner(System.in);
+                System.out.print("Enter a new name and age for this pet (Enter \"name\" or \"age\") ");
+                String strEntry = updatePet.nextLine();
+                String[] arrEntry = strEntry.split(" ");
+                pets.get(petToUpdate).setName(arrEntry[0]);
+                pets.get(petToUpdate).setAge(Integer.parseInt(arrEntry[1]));
+                
+                System.out.println("Here is the updated table");
+                displayFullPetTable(pets);
+            }
+            else if (userChoice == 5) {
+                displayFullPetTable(pets);
+                
+                Scanner removePet = new Scanner(System.in);
+                System.out.println("");
+                System.out.print("Enter the ID of the pet you would like to remove: ");
+                int petToRemove = removePet.nextInt();
+                
+                pets.remove(petToRemove);
+                
+                System.out.println("Here is the updated table");
+                displayFullPetTable(pets);
+                
+            }
         }
     }
 
+    public static void displayFullPetTable(ArrayList<Pet> pets) {
+        displayPetHeader();
+        for (int k = 0; k < pets.size(); k++) {
+            displayPetRow(k, pets);
+        }
+        displayPetFooter(pets);
+    }
     public static void displayPetHeader() {
         System.out.println("+----------------------+");
         System.out.println("| ID | NAME      | AGE |");
