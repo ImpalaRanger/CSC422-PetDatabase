@@ -68,14 +68,35 @@ public class PetDbAssn1 {
                     Scanner petEntry = new Scanner(System.in);
                     System.out.print("Add pet (\"name age\" ): ");
                     String strEntry = petEntry.nextLine();
-                    System.out.println("DEBUG: user entered " + strEntry);
+                    //System.out.println("DEBUG: user entered " + strEntry);
                     
                     if (strEntry.equals("done")) {
                         doneEntering = true;
                     }
+                    else if (pets.size() >= 5) {
+                        System.out.println("Database only supports 5 entries.\n");
+                        doneEntering = true;
+                    }
                     else {
-                        String[] arrEntry = strEntry.split(" ");
-                        pets.add(new Pet(arrEntry[0], Integer.parseInt(arrEntry[1])));
+                        try {
+                            String[] arrEntry = strEntry.split(" ");
+                            String name = arrEntry[0];
+                            try {
+                                int age = Integer.parseInt(arrEntry[1]);
+                                if (1 > age || 20 < age) {
+                                    System.out.println("Valid age range is 1-20");
+                                }
+                                else {
+                                    pets.add(new Pet(name, age));
+                                }
+                            }
+                            catch (NumberFormatException e) {
+                                System.out.println("Enter the age as an integer");
+                            }
+                        }
+                        catch (ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Not a valid input.");
+                        } 
                     }
                 }
             }
@@ -118,16 +139,21 @@ public class PetDbAssn1 {
                 System.out.println("");
                 System.out.print("Enter the ID of the pet you would like to update: ");
                 int petToUpdate = updateId.nextInt();
+                if ((!(petToUpdate == (int)petToUpdate)) || petToUpdate < 0 || petToUpdate > pets.size() - 1) {
+                    System.out.println("That is not a valid ID.");
+                }
+                else {
+                    Scanner updatePet = new Scanner(System.in);
+                    System.out.print("Enter the updated name and age for this pet: ");
+                    String strEntry = updatePet.nextLine();
+                    String[] arrEntry = strEntry.split(" ");
+                    pets.get(petToUpdate).setName(arrEntry[0]);
+                    pets.get(petToUpdate).setAge(Integer.parseInt(arrEntry[1]));
                 
-                Scanner updatePet = new Scanner(System.in);
-                System.out.print("Enter a new name and age for this pet (Enter \"name\" or \"age\") ");
-                String strEntry = updatePet.nextLine();
-                String[] arrEntry = strEntry.split(" ");
-                pets.get(petToUpdate).setName(arrEntry[0]);
-                pets.get(petToUpdate).setAge(Integer.parseInt(arrEntry[1]));
+                    System.out.println("Here is the updated table");
+                    displayFullPetTable(pets);
+                }
                 
-                System.out.println("Here is the updated table");
-                displayFullPetTable(pets);
             }
             else if (userChoice == 5) {
                 displayFullPetTable(pets);
@@ -136,11 +162,15 @@ public class PetDbAssn1 {
                 System.out.println("");
                 System.out.print("Enter the ID of the pet you would like to remove: ");
                 int petToRemove = removePet.nextInt();
+                if ((!(petToRemove == (int)petToRemove)) || petToRemove < 0 || petToRemove > pets.size() - 1) {
+                    System.out.println("That is not a valid ID.");
+                }
+                else {
+                    pets.remove(petToRemove);
+                    System.out.println("Here is the updated table");
+                    displayFullPetTable(pets);
+                }
                 
-                pets.remove(petToRemove);
-                
-                System.out.println("Here is the updated table");
-                displayFullPetTable(pets);
                 
             }
         }
