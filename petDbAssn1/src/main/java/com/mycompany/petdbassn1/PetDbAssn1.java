@@ -6,6 +6,10 @@ package com.mycompany.petdbassn1;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
 /**
  *
  * @author veltk
@@ -14,6 +18,7 @@ public class PetDbAssn1 {
 
     public static void main(String[] args) {
         ArrayList<Pet> pets = new ArrayList<>();
+        String filename = "petData.txt";
         // default pets for testing purposes
         /* 
         pets.add(new Pet("bobb", 9));
@@ -21,6 +26,20 @@ public class PetDbAssn1 {
         pets.add(new Pet("bobb", 7));
         pets.add(new Pet("alice", 9));
         */
+        try { // file creation code block from https://www.w3schools.com/java/java_files_create.asp
+            File petFile = new File(filename);
+            if (petFile.createNewFile()) {
+                System.out.println("File created: " + filename);
+            } 
+            else {
+                System.out.println("File already exists.");
+            }
+            pets = loadFromFile(filename);
+        } 
+        catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
         
         
         int userChoice = -1;
@@ -125,6 +144,8 @@ public class PetDbAssn1 {
                 
             }
         }
+        
+        saveToFile(filename, pets);
     }
 
     public static void displayFullPetTable(ArrayList<Pet> pets) {
@@ -145,5 +166,39 @@ public class PetDbAssn1 {
     public static void displayPetFooter(ArrayList<Pet> pets) {
         System.out.println("+----------------------+");
         System.out.println(pets.size() + " rows in set.");
+    }
+    
+    public static void saveToFile(String filename, ArrayList<Pet> pets) {
+        try {
+            FileWriter petWriter = new FileWriter(filename);
+            for (Pet p : pets) {
+                petWriter.write(p.getName() + " " + p.getAge() + "\n");
+            }
+            petWriter.close();
+            System.out.println("Saved pets to file successfully");
+            
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static ArrayList<Pet> loadFromFile(String filename) {
+        ArrayList<Pet> pets = new ArrayList<>();
+        try {
+            File petFile = new File(filename);
+            Scanner petFileScanner = new Scanner(petFile);
+            while (petFileScanner.hasNextLine()) {
+                String pet = petFileScanner.nextLine();
+                String[] arrEntry = pet.split(" ");
+                pets.add(new Pet(arrEntry[0], Integer.parseInt(arrEntry[1])));
+            }
+            petFileScanner.close();
+            return pets;
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return pets;
     }
 }
